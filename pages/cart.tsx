@@ -1,7 +1,8 @@
-import { useCart } from '../context/CartContext'
+import withAuth from '../components/withAuth';
+import { useCart } from '../context/CartContext';
 import Link from 'next/link';
 
-export default function CartPage() {
+function CartPage() {
   const { cart, removeFromCart, clearCart, increaseQuantity, decreaseQuantity } = useCart();
 
   const total = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
@@ -13,45 +14,22 @@ export default function CartPage() {
         <p>Your cart is empty</p>
       ) : (
         <>
-          <table className="w-full mb-8">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-2">Product</th>
-                <th className="text-left py-2">Price</th>
-                <th className="text-left py-2">Quantity</th>
-                <th className="text-left py-2">Total</th>
-                <th className="text-left py-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.map((item) => (
-                <tr key={item.product.id} className="border-b">
-                  <td className="py-2">{item.product.name}</td>
-                  <td className="py-2">${item.product.price.toFixed(2)}</td>
-                  <td className="py-2">
-                    <button onClick={() => decreaseQuantity(item.product.id.toString())}>-</button>
-                    {item.quantity}
-                    <button onClick={() => increaseQuantity(item.product.id.toString())}>+</button>
-                  </td>
-                  <td className="py-2">${(item.product.price * item.quantity).toFixed(2)}</td>
-                  <td className="py-2">
-                    <button
-                      className="bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-600"
-                      onClick={() => removeFromCart(item.product.id.toString())}
-                    >
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ul className="mb-8">
+            {cart.map((item) => (
+              <li key={item.product.id} className="flex justify-between items-center border-b py-2">
+                <span>{item.product.name} - ${item.product.price.toFixed(2)}</span>
+                <div>
+                  <button onClick={() => decreaseQuantity(item.product.id)} className="px-2">-</button>
+                  <span className="mx-2">{item.quantity}</span>
+                  <button onClick={() => increaseQuantity(item.product.id)} className="px-2">+</button>
+                  <button onClick={() => removeFromCart(item.product.id)} className="ml-4 text-red-500">Remove</button>
+                </div>
+              </li>
+            ))}
+          </ul>
           <div className="flex justify-between items-center mb-8">
             <p className="text-xl font-bold">Total: ${total.toFixed(2)}</p>
-            <button
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-              onClick={clearCart}
-            >
+            <button onClick={clearCart} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
               Clear Cart
             </button>
           </div>
@@ -68,3 +46,5 @@ export default function CartPage() {
     </div>
   );
 }
+
+export default withAuth(CartPage);

@@ -28,10 +28,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(200).json({ id: session.id })
     } catch (err: any) {
-      res.status(500).json({ statusCode: 500, message: err.message })
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   } else {
-    res.setHeader('Allow', 'POST')
-    res.status(405).end('Method Not Allowed')
+    res.status(405).end();
   }
 }
